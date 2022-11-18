@@ -11,6 +11,16 @@ const mapArrayApiToDiets = (recipes) =>{
   }
   return Array.from(diets).map(d =>{return{name:d}});
 }
+const getAllDietsFromBd = async () =>{
+  try{
+    const diets = await dietRepository.getAllDiets();
+    if(!diets.length) throw {status:400, message: "Not Found Diets in BD"}
+    return diets;
+  }catch (e){
+    throw{ status: e?.status || 500, message: e?.message || e.message}
+  }
+}
+
 const findOrCreateDiets = async ()=>{
   try{
     let diets = await dietRepository.getAllDiets();
@@ -22,7 +32,7 @@ const findOrCreateDiets = async ()=>{
       console.log("Diets exist in the Data Base")
     }
   }catch(e){
-    throw{status: e?.status || 500, message: e?.message || error};
+    throw{status: e?.status || 500, message: e?.message || e.message};
   }
   
 
@@ -39,5 +49,6 @@ const getALLDietsFromApi = async () =>{
 
 module.exports = {
   getALLDietsFromApi,
-  findOrCreateDiets
+  findOrCreateDiets,
+  getAllDietsFromBd
 }

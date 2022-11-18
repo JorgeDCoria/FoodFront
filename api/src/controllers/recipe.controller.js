@@ -4,6 +4,8 @@ const {
   queryFindRecipeByProp,
   queryFindRecipeByPropLike
 } = require('../queries/recipe.queries');
+
+const recipeService = require('../services/recipe.service');
 const axios = require('axios');
 const { INTEGER } = require('sequelize');
 const URL = 'http://localhost:3002/api/'
@@ -38,6 +40,8 @@ const mapApiToRecipe = (recipe) => {
   return {
     id: recipe.id,
     title: recipe.title,
+    healthScore: recipe.healthScore,
+    image:recipe.image,
     summary: recipe.summary,
     diets: Array.from(dietsApi),
     steps: stepsApi
@@ -72,16 +76,17 @@ recipeCtrl.getRecipeById = (req, res) => {
 
   if (isNaN(req.params.id)) {
 
-    Recipe.findAll(queryFindRecipeByProp('id', req.params.id))
+    //Recipe.findAll(queryFindRecipeByProp('id', req.params.id))
+    Recipe.findOne(queryFindRecipeByProp('id', req.params.id))
       .then(r => {
-        if (r.length) return res.json(r);
+        if (r) return res.json({status: 'OK', data: r});
         return res.json(`Not found recipe with id ${req.params.id}`)
       }).catch(e => res.status(401).json({ error: `Error searching recipe in the Database: ${e.message}` }));
   } else {
     axios.get(`${URL}byId`).then(r => {
       r ?
-        res.json(mapApiToRecipe(r.data)) :
-        res.json(`Not found recipe with id ${req.params.id}`)
+        res.json({status: 'OK', data:mapApiToRecipe(r.data)}) :
+        res.json({status:'FAILED', data:`Not found recipe with id ${req.params.id}`})
       //r ? res.json(mapApiToRecipe(r)): res.json(`Not found recipe with id: ${req.params.id}`)
     }).catch(e => res.status(401).json({ error: `Error searching recipe in the api: ${e.message}` }))
   }
@@ -91,9 +96,10 @@ recipeCtrl.getRecipeById = (req, res) => {
 }
 
 recipeCtrl.addRecipe = async (req, res) => {
-  const { recipes } = req.body;
+  const recipes  = req.body;
   try {
-    let mapAux = recipes.map(r => Recipe.create({ title: r.title, summary: r.summary, healthScore: r.healthScore }));
+    //array de promesas para crear recipes
+    let mapAux = recipes.map(r => Recipe.create({ title: r.title, image:r.image, summary: r.summary, healthScore: parseInt(r.healthScore)}));
     const result = await Promise.all(mapAux);
 
     for (let i = 0; i < recipes.length; i++) {
@@ -110,12 +116,16 @@ recipeCtrl.addRecipe = async (req, res) => {
     //const stepResult = await Promise.all(stepsAux);
 
     mapAux = [];
+    let dietsBd = recipes.map(e =>Diet.findAll({where:{name:e.diets}}));
+    dietsBd = await Promise.all(dietsBd);
+    console.log(JSON.stringify(dietsBd));
+    
     //se arma array de promesas para agregar las dietas a las recetas
     for (let i = 0; i < recipes.length; i++) {
-      if (recipes[i].diets.length) mapAux.push(result[i].addDiets(recipes[i].diets))
+      mapAux.push(result[i].addDiets(dietsBd[i]))
     }
     await Promise.all(mapAux);
-    const recipesBd = await Recipe.findAll(queryRecipesWithDiet);
+    const recipesBd = await Recipe.findAll(queryRecipesWithDiet());
     res.json(recipesBd);
   } catch (e) {
     res.status(401).json({ error: `error saving recipe: ${e.message}` })
@@ -144,6 +154,11 @@ recipeCtrl.deleteRecipe = async (req, res) => {
   await recipe.destroy();
   res.json("Recipes dropped");
 
+}
+
+recipeCtrl.findRecipeByDiet = async (req, res) => {
+  const recipeBd = await recipeService.findRecipeByDiet(req.query.name);
+  res.json(recipeBd);
 }
 
 module.exports = recipeCtrl;

@@ -1,0 +1,6 @@
+.container{
+  background: url('../../assets/landing-image.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}

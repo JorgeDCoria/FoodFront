@@ -7,10 +7,14 @@ const getAllDietbd = async () =>{
   return await Diet.findAll();
 }
 
-dietCtrl.getDiet = async (req, res)=>{
-  //const dietaBd = await getAllDietbd();
-  const diets = await dietService.getALLDietsFromApi();
-  res.json(diets);
+dietCtrl.getDiets = async (req, res)=>{
+  try{
+    const diets = await dietService.getAllDietsFromBd();
+    res.json({status: 'OK', data: diets});
+  }catch(e){
+    res.status(e?.status || 500).json({status:'FAILDED', data: e.message})
+  }
+  
 }
 
 dietCtrl.createDiet = async (req, res) =>{

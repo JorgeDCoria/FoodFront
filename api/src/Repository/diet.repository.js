@@ -14,10 +14,15 @@ const addDiets = async (diets)=>{
   try{
     await Diet.bulkCreate(diets);
   }catch(e){
-    throw{status:500, message:`Error adding diets`};
+    throw{status:500, message:`Error adding diets: ${e.message}`};
   }
+}
+
+const findDietByName = async (name) =>{
+  return await Diet.findOne({where: {name}});
 }
 module.exports = {
   getAllDiets, 
-  addDiets
+  addDiets,
+  findDietByName
 }
