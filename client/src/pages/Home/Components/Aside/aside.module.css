@@ -1,0 +1,21 @@
+.container{
+ min-height: 90vh;
+ border-right: 2px var(--main-one-color) solid;
+ position: sticky;
+ top: 50px;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+}
+
+.containerselect{
+  height: 200px;
+  border: 2px solid red;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.check{
+  color: var(--main-text-color);
+}

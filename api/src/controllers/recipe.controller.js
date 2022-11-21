@@ -7,7 +7,6 @@ const {
 
 const recipeService = require('../services/recipe.service');
 const axios = require('axios');
-const { INTEGER } = require('sequelize');
 const URL = 'http://localhost:3002/api/'
 const recipeCtrl = {};
 
@@ -52,26 +51,22 @@ const mapApiToRecipe = (recipe) => {
 recipeCtrl.getRecipes = async (req, res) => {
   try {
     if (req.query.title) {
-      let recipeBd = await Recipe.findAll(queryFindRecipeByPropLike('title', req.query.title));
-      let recipesApi = await axios.get(`${URL}allRecipes`).then(r => r.data.results);
-      recipesApi = mapArrayApiToArrayRecipe(recipesApi.filter(r => r.title.includes(req.query.title)));
-      const allRecipes = [...recipeBd, ...recipesApi];
+      const allRecipes = await recipeService.getRecipesByNameOpLike(req.query.title);
       if(allRecipes.length) return res.json({status:'Ok', data: allRecipes});
       return res
         .status(400)
         .json({status: 'FAILED', data: `Not found recipe with name ${req.query.title}`});
       
-
     } else {
-      const recipesBd = await Recipe.findAll(queryRecipesWithDiet());
-      const recipesApi = await axios.get(`${URL}allRecipes`).then(r => mapArrayApiToArrayRecipe(r.data.results));
-      res.json([...recipesApi, ...recipesBd]);
+      const recipes = await recipeService.findAllRecipes();
+      res.json(recipes);
     }
 
   } catch (e) {
     res.status(401).json({status:'FAILED', data: `error loading recipes: ${e.message}` })
   }
 }
+
 recipeCtrl.getRecipeById = (req, res) => {
 
   if (isNaN(req.params.id)) {

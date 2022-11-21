@@ -1,6 +1,6 @@
 const { Diet, Step, Op } = require('../db');
 
-const queryRecipesWithDiet = () => {
+const queryRecipes = () => {
   return {
     include: [
       {
@@ -11,6 +11,7 @@ const queryRecipesWithDiet = () => {
       },
       {
         model: Step,
+        attributes: ['number', 'step']
       }
     ]
   }
@@ -31,13 +32,13 @@ const queryFindRecipeByProp = (prop, value) => {
     include: [
       {
         model: Diet,
-        trough: {
+        through: {
           attributes: []
         }
       },
       {
         model: Step,
-        trough: {
+        through: {
           attributes: []
         }
       }
@@ -52,12 +53,20 @@ const queryFindRecipeByPropLike = (prop, value) => {
     where: {
       [prop]: { [Op.like]: `%${value}%` }
     },
-    include: {
-      model: Diet,
-      trough: {
-        attributes: []
+    include: [
+      {
+        model: Diet,
+        through: {
+          attributes: []
+        }
+      },
+      {
+        model: Step,
+        attributes: ['number', 'step']
       }
-    }
+    ]
+
+
   }
 }
 
@@ -66,7 +75,7 @@ const queryFindRecipeByDiet = (diet) => {
     include:
     {
       model: Diet,
-      trough: {
+      through: {
         attributes: []
       },
       where: {
@@ -79,7 +88,7 @@ const queryFindRecipeByDiet = (diet) => {
 
 module.exports = {
   queryFindRecipeByProp,
-  queryRecipesWithDiet,
+  queryRecipes,
   queryFindRecipeByPropLike,
   queryFindRecipeByDiet
 }

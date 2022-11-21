@@ -1,0 +1,26 @@
+.container{
+  cursor: pointer;
+  background: var(--main-one-color) ;
+  border-radius: 25px;
+  color: white;
+  font-weight: 600;
+}
+
+.xl{
+  height: 50px;
+  width: 250px;
+  font-size: var(--main-text-body-xl); 
+  border: 4px solid white;
+  box-sizing: border-box;
+}
+.md{
+  height: 35px;
+  width : 130px;
+  border: 2px solid white;
+  box-sizing: border-box;
+}
+
+.container:hover{
+  transition: 0.5s;
+  background: #007342;
+}

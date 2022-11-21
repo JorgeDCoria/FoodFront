@@ -1,0 +1,15 @@
+
+.subcontainer{
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: 350px auto;
+  justify-content: space-between;
+
+}
+
+.containercards{
+ display: flex;
+ flex-wrap: wrap;
+ justify-content: space-around; 
+ 
+}

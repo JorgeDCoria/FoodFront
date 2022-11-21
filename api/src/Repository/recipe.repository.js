@@ -1,6 +1,10 @@
 const {Recipe, conn} = require('../db');
 const {QueryTypes} = require('sequelize');
-const {queryFindRecipeByProp} = require('../queries/recipe.queries')
+const {
+  queryFindRecipeByProp,
+  queryFindRecipeByPropLike,
+  queryRecipes
+} = require('../queries/recipe.queries')
 const findRecipeByDiet = async (diet)=>{
   //const recipe = await 
 }
@@ -15,9 +19,17 @@ const findRecipesByIds = async (arrayRecipesId)=>{
   const recipes = await Promise.all(aux);
   return recipes;
 }
+const findRecipeByNameOpLike = async (name) =>{
+  return await Recipe.findAll(queryFindRecipeByPropLike('title', name));
+}
 
+const findAllRecipes = async ()=> {
+  return await Recipe.findAll(queryRecipes());
+}
 module.exports = {
   findRecipeByDiet,
   findRecipesIdByDiet,
-  findRecipesByIds
+  findRecipesByIds,
+  findRecipeByNameOpLike,
+  findAllRecipes
 }
