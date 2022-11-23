@@ -5,7 +5,7 @@ import Button from "../../../../components/Button/Button";
 import { filterRecipeByTitle } from "../../../../redux/action/action";
 import s from "./searchBar.module.css"
 
-export default function SearchBar() {
+export default function SearchBar({setPagina}) {
   const [search, setSearch] = useState('');
   const dispatch = useDispatch();
 
@@ -16,6 +16,7 @@ export default function SearchBar() {
     e.preventDefault();
     dispatch(filterRecipeByTitle(search));
     setSearch('');
+    setPagina(1);
   }
   return (
 

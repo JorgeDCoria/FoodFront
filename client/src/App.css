@@ -1,9 +1,9 @@
 :root {
-  --main-one-color : #6CC800;
+  --main-one-color : #7ce600;
   --second-one-color: #007342;
   --main-two-color: #FF8500;
-  --second-two-color: rgba(255, 133, 0, 0.7);
-  --main-three-color: #003357;
+  --second-two-color: rgba(255, 133, 0, 0.8);
+  --main-three-color: #6a00e6;
   --second-three-color: green;
   --main-four-color: #EFF0F2;
 
@@ -12,7 +12,7 @@
   --main-text-title: 64px;
   --main-text-subtitle: 36px;
   --main-text-body-xl: 21px;
-  --main-text-body-md: 14px;
+  --main-text-body-md: 16px;
   --main-text-small: 12px;
   
 }

@@ -4,8 +4,9 @@ import { filterRecipeByDiet, orderRecipe } from '../../../../redux/action/action
 import { useDispatch } from "react-redux";
 import s from "./aside.module.css";
 import Select from "../../../../components/Select/Select";
+import Loading from "../../../Loading/Loading";
 
-export default function Aside() {
+export default function Aside({ setPagina }) {
   const [diets, setDiets] = useState([]);
   const [selectOrder, setSelectOrder] = useState('');
   const [order, setOrder] = useState(null);
@@ -13,7 +14,7 @@ export default function Aside() {
 
   useEffect(() => {
     dietService.getAllDiets().then(r => {
-      setDiets(r)
+      setDiets(r);
     })
 
   }, [])
@@ -22,6 +23,7 @@ export default function Aside() {
     if (e.target.value !== '')
       dispatch(filterRecipeByDiet(e.target.value));
     setOrder(null);
+
   }
 
   const handleSelectOrder = (e) => {
@@ -36,35 +38,36 @@ export default function Aside() {
 
   const handleOrder = (e) => {
     setOrder(e.target.value);
-    console.log(selectOrder)
     dispatch(orderRecipe(selectOrder, e.target.value));
+    setPagina(1);
   }
-  return (
-    <div className={s.container}>
-      <h1>Filtros</h1>
-      <div className={s.containerselect}>
-        {
-          diets.length &&
+  if (diets.length) {
+    return (
+      <div className={s.container}>
+        <h1>Filtros</h1>
+        <div className={s.containerselect}>
           <Select name="dieta" handleSelect={filterByDiet} valueSelect='' data={diets} prop='name' valueOption='name' />
-        }
+          <Select handleSelect={handleSelectOrder} name={"propiedad"} valueSelect={selectOrder} data={["Title", "Health Score"]} prop='' valueOption='' />
 
-        <Select handleSelect={handleSelectOrder} name={"propiedad"} valueSelect={selectOrder} data={["Title", "Health Score"]} prop=''valueOption=''/>
+          {selectOrder.length !== 0 &&
+            <div className={s.check}>
+              <label htmlFor="">Ascendente
+                <input type="radio" name="order" id="" value={"asc"} checked={order === "asc"} onChange={(e) => handleOrder(e)} />
+              </label>
+              <label htmlFor="">Descendente
+                <input type="radio" name="order" id="" value={"desc"} checked={order === "desc"} onChange={(e) => handleOrder(e)} />
+              </label>
 
-        {selectOrder.length &&
-          <div className={s.check}>
-            <label htmlFor="">Ascendente
-              <input type="radio" name="order" id="" value={"asc"} checked={order === "asc"} onChange={(e) => handleOrder(e)} />
-            </label>
-            <label htmlFor="">Descendente
-              <input type="radio" name="order" id="" value={"desc"} checked={order === "desc"} onChange={(e) => handleOrder(e)} />
-            </label>
+            </div>
+          }
+        </div>
 
-          </div>
-        }
+        {!diets.length && <p>Loading</p>}
+
       </div>
+    )
+  } else {
+    return <Loading />
+  }
 
-      {!diets.length && <p>Loading</p>}
-
-    </div>
-  )
 }

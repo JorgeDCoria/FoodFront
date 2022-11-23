@@ -38,13 +38,12 @@ const queryFindRecipeByProp = (prop, value) => {
       },
       {
         model: Step,
-        through: {
-          attributes: []
-        }
+        attributes: ['number', 'step']
       }
     ]
-    ,
-
+      
+     
+    
   }
 }
 

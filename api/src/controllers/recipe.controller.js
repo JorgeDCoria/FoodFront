@@ -1,8 +1,6 @@
 const { Recipe, Diet, Step } = require('../db');
 const {
-  queryRecipesWithDiet,
-  queryFindRecipeByProp,
-  queryFindRecipeByPropLike
+  queryRecipes
 } = require('../queries/recipe.queries');
 
 const recipeService = require('../services/recipe.service');
@@ -68,26 +66,10 @@ recipeCtrl.getRecipes = async (req, res) => {
 }
 
 recipeCtrl.getRecipeById = (req, res) => {
-
-  if (isNaN(req.params.id)) {
-
-    //Recipe.findAll(queryFindRecipeByProp('id', req.params.id))
-    Recipe.findOne(queryFindRecipeByProp('id', req.params.id))
-      .then(r => {
-        if (r) return res.json({status: 'OK', data: r});
-        return res.json(`Not found recipe with id ${req.params.id}`)
-      }).catch(e => res.status(401).json({ error: `Error searching recipe in the Database: ${e.message}` }));
-  } else {
-    axios.get(`${URL}byId`).then(r => {
-      r ?
-        res.json({status: 'OK', data:mapApiToRecipe(r.data)}) :
-        res.json({status:'FAILED', data:`Not found recipe with id ${req.params.id}`})
-      //r ? res.json(mapApiToRecipe(r)): res.json(`Not found recipe with id: ${req.params.id}`)
-    }).catch(e => res.status(401).json({ error: `Error searching recipe in the api: ${e.message}` }))
-  }
-
-
-
+  recipeService.getRecipeById(req.params.id)
+    .then(r => res.json({status: 'OK', data:r}))
+    .catch(e => res.status(e?.status || 500).json({ status: 'FAILED' , data: `Error: ${e.message}` }));
+ 
 }
 
 recipeCtrl.addRecipe = async (req, res) => {
@@ -120,7 +102,7 @@ recipeCtrl.addRecipe = async (req, res) => {
       mapAux.push(result[i].addDiets(dietsBd[i]))
     }
     await Promise.all(mapAux);
-    const recipesBd = await Recipe.findAll(queryRecipesWithDiet());
+    const recipesBd = await Recipe.findAll(queryRecipes());
     res.json(recipesBd);
   } catch (e) {
     res.status(401).json({ error: `error saving recipe: ${e.message}` })

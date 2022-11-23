@@ -1,4 +1,4 @@
-const recipeRepository = require ('../Repository/recipe.repository');
+const recipeRepository = require('../Repository/recipe.repository');
 const dietRepository = require('../Repository/diet.repository');
 const axios = require('axios');
 
@@ -6,12 +6,12 @@ const axios = require('axios');
 const URL = 'http://localhost:3002/api/'
 
 //########## mapeo de datos de bd   ##########
-const mapArrayBdToArrayRecipe = (data) =>{
-  
+const mapArrayBdToArrayRecipe = (data) => {
+
   return data.map(e => mapRecipeBdToRecipe(e));
 }
-const mapRecipeBdToRecipe = (recipe) =>{
-  return{
+const mapRecipeBdToRecipe = (recipe) => {
+  return {
     id: recipe.id,
     title: recipe.title,
     image: recipe.image,
@@ -52,7 +52,7 @@ const mapApiToRecipe = (recipe) => {
     id: recipe.id,
     title: recipe.title,
     healthScore: recipe.healthScore,
-    image:recipe.image,
+    image: recipe.image,
     summary: recipe.summary,
     diets: Array.from(dietsApi),
     steps: stepsApi
@@ -61,30 +61,51 @@ const mapApiToRecipe = (recipe) => {
 }
 
 
-const findRecipeByDiet = async (diet) =>{
+const findRecipeByDiet = async (diet) => {
   const dietId = await dietRepository.findDietByName(diet);
   const recipesId = await recipeRepository.findRecipesIdByDiet(dietId.id);
-  let recipes = await recipeRepository.findRecipesByIds(recipesId);
-  return recipes;
+  let recipesBd = await recipeRepository.findRecipesByIds(recipesId).then(r => mapArrayBdToArrayRecipe(r));
+  let recipesApi = await axios.get(`${URL}allRecipes`)
+    .then(r => r.data.results)
+    .then(r => mapArrayApiToArrayRecipe(r.filter(r => r.diets.includes(diet))));
+  return [...recipesBd, ...recipesApi];
 }
 
-const getRecipesByNameOpLike = async (name) =>{
+const getRecipesByNameOpLike = async (name) => {
   let recipesBd = await recipeRepository.findRecipeByNameOpLike(name).then(r => mapArrayBdToArrayRecipe(r));
   let recipesApi = await axios.get(`${URL}allRecipes`)
-  .then(r => r.data.results)
-  .then(r => mapArrayApiToArrayRecipe(r.filter(r => r.title.includes(name))));
+    .then(r => r.data.results)
+    .then(r => mapArrayApiToArrayRecipe(r.filter(r => r.title.includes(name))));
 
   return [...recipesBd, ...recipesApi];
 }
 
 
-const findAllRecipes = async () =>{
+const findAllRecipes = async () => {
   const recipesBd = await recipeRepository.findAllRecipes().then(r => mapArrayBdToArrayRecipe(r));
   const recipesApi = await axios.get(`${URL}allRecipes`).then(r => mapArrayApiToArrayRecipe(r.data.results));
   return [...recipesBd, ...recipesApi]
 }
+
+const getRecipeById = async (id) => {
+  let recipe;
+  try {
+    if (isNaN(id)) {
+      recipe = await recipeRepository.findRecipeById(id).then(r => mapRecipeBdToRecipe(r));
+    } else {
+      recipe = await axios.get(`${URL}byId`).then(r => r.data);
+      if (recipe) recipe = mapApiToRecipe(recipe);
+      else throw ({ status: 400, message: `Not found Recipe with Id ${id}` })
+    }
+    return recipe;
+  } catch (e) {
+    throw ({ status: e?.status || 500, message: e.message });
+  }
+
+}
 module.exports = {
   findRecipeByDiet,
   getRecipesByNameOpLike,
-  findAllRecipes
+  findAllRecipes,
+  getRecipeById
 }

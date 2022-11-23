@@ -1,9 +1,10 @@
 import React from "react";
 import GroupDiet from "./components/GroupDiet/GroupDiet";
+import {Link} from 'react-router-dom';
 import s from './card.module.css';
 
 export default function Card({data}){
-  const {title, image, healthScore, diets} = data;
+  const { id, title, image, healthScore, diets} = data;
  
   return(
     <div className={s.container}>
@@ -14,6 +15,7 @@ export default function Card({data}){
           <p className={s.number}>{healthScore}</p>
           <p className={s.healthtitle}>Healt Score</p>
         </div>
+        <Link to={`/detail/${id}`}><div className={s.backhover}><h2>SEE DETAIL</h2></div></Link>
       </div>
       <div className={s.containerdiets}>
       {diets.length ? <GroupDiet data={diets}/> :<p>No contiene tipo de Dieta</p>}

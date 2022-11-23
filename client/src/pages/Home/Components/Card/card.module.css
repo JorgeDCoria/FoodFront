@@ -1,4 +1,4 @@
-.container{
+.container {
   display: flex;
   flex-direction: column;
   height: 420px;
@@ -6,25 +6,41 @@
   background-color: #E7E9EB;
   margin-bottom: 35px;
   border-radius: 15px;
-  box-shadow: 
-    1px 1px 15px var(--main-three-color),
-    1px -1px 15px var(--main-three-color),
-    -1px 1px 15px var(--main-three-color),
-    -1px -1px 15px var(--main-three-color)
-    ;
+  border: 1px var(--main-one-color) solid;
+
 }
-.title{
-  font-size: var( --main-text-body-xl);
+.container:hover{
+  box-shadow:
+    1px 1px 15px var(--main-one-color),
+    1px -1px 15px var(--main-one-color),
+    -1px 1px 15px var(--main-one-color),
+    -1px -1px 15px var(--main-one-color);
+  transition: 0.7s;
+}
+
+.title {
+  font-size: var(--main-text-body-xl);
   padding: 2px;
   margin-top: 10px;
   height: 35px;
 }
-.containerimage{
+
+.containerimage {
   position: relative;
   height: 250px;
+  cursor: pointer;
+  overflow: hidden;
   box-sizing: border-box;
 }
-.healthScore{
+
+.containerimage:hover .backhover {
+  top: -100px;
+  left: -35px;
+  transition:  0.8s;
+}
+
+
+.healthScore {
   width: 70px;
   height: 80px;
   background: var(--main-one-color);
@@ -40,22 +56,45 @@
   color: white;
 
 }
-.number{
-    font-size: var(--main-text-subtitle);
-    margin: 0;
-    
+
+.backhover {
+  width: 470px;
+  height: 470px;
+  position: absolute;
+  left: -400px;
+  top: 400px;
+  background: var(--second-two-color);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
 }
-.healthtitle{
+
+.backhover h2 {
+  font-size: var(--main-text-subtitle);
+  color: white;
+}
+
+.number {
+  font-size: var(--main-text-subtitle);
+  margin: 0;
+
+}
+
+.healthtitle {
   margin: 0;
   font-size: 12px;
 }
-.image{
+
+.image {
   object-fit: cover;
   width: 100%;
   height: 100%;
   border-radius: 25px;
   padding: 10px;
   box-sizing: border-box;
-  
-  
+
+
 }

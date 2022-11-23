@@ -16,6 +16,7 @@ const findRecipesIdByDiet = async (dietId) =>{
 
 const findRecipesByIds = async (arrayRecipesId)=>{
   let aux = arrayRecipesId.map(e => Recipe.findOne(queryFindRecipeByProp("id", e.recipeId) ));
+  console.log(JSON.stringify(aux));
   const recipes = await Promise.all(aux);
   return recipes;
 }
@@ -26,10 +27,21 @@ const findRecipeByNameOpLike = async (name) =>{
 const findAllRecipes = async ()=> {
   return await Recipe.findAll(queryRecipes());
 }
+
+const findRecipeById = async (id) =>{
+  try{
+    const recipe = await Recipe.findOne(queryFindRecipeByProp('id', id));
+    if(recipe) return recipe;
+    throw({status: 400, message: `Not Found Recipe with Id ${id}`});
+  }catch (e){
+    throw({status: e?.status || 500, message: e.message });
+  }
+}
 module.exports = {
   findRecipeByDiet,
   findRecipesIdByDiet,
   findRecipesByIds,
   findRecipeByNameOpLike,
-  findAllRecipes
+  findAllRecipes, 
+  findRecipeById
 }
