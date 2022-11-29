@@ -10,6 +10,7 @@
 .containersection{
   display: flex;
   flex-direction: column;
+  
 }
 .containercards{
  display: flex;
@@ -17,4 +18,8 @@
  justify-content: space-around; 
  margin-top: 20px;
  
+}
+.error{
+ width: 700px;
+
 }

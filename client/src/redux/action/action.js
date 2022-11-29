@@ -6,10 +6,12 @@ export const FILTER_RECIPES_BY_TITLE = "FILTER_RECIPES_BY_TITLE";
 export const ORDER_RECIPE = "ORDER_RECIPE";
 export const SAVE_RECIPES = "SAVE_RECIPES";
 export const ERROR = "ERROR";
+export const CLEAN_ERROR = "CLEAN";
 
-export const getAllRecipes= () =>{
-  return async (dispatch) =>{
-    const recipes = await axios.get(`${URL}recipes`).then(r =>r.data);
+
+export const getAllRecipes = () => {
+  return async (dispatch) => {
+    const recipes = await axios.get(`${URL}recipes`).then(r => r.data);
     dispatch({
       type: GET_ALL_RECIPES,
       payload: recipes
@@ -17,10 +19,9 @@ export const getAllRecipes= () =>{
   }
 }
 
-export const filterRecipeByDiet = (diet) =>{
+export const filterRecipeByDiet = (diet) => {
   return async (dispatch) => {
     const recipes = await axios.get(`${URL}recipes/findByDiets?name=${diet}`).then(r => r.data);
-    console.log(recipes);
     dispatch({
       type: FILTER_RECIPES_BY_DIET,
       payload: recipes
@@ -28,51 +29,56 @@ export const filterRecipeByDiet = (diet) =>{
   }
 }
 
-export const filterRecipeByTitle = (title) =>{
-  return (dispatch) =>{
-    axios.get(`${URL}recipes?title=${title}`).then(res =>{
-      dispatch({
-        type: FILTER_RECIPES_BY_TITLE,
-        payload: res.data.data
-      })
-    })
-    .catch((e)=>{
+export const filterRecipeByTitle = (title) => {
+  return (dispatch) => {
+    axios.get(`${URL}recipes?title=${title}`).then(res => {
+      console.log(JSON.stringify(res.data));
+        dispatch({
+          type: FILTER_RECIPES_BY_TITLE,
+          payload: res.data.data
+        })
+      }
+        
+    ).catch(e => {
       dispatch({
         type: ERROR,
-        payload: e.message
+        payload: e.response.data.message
       })
-    })
+    }) 
   }
 }
 
-export const orderRecipe = (prop, order) =>{
-  return{
+export const orderRecipe = (prop, order) => {
+  return {
     type: ORDER_RECIPE,
-    payload: {prop, order}
+    payload: { prop, order }
   }
 }
 
-export const findRecipeById = (idRecipe) =>{
-  return async (dispatch) =>{
+export const findRecipeById = (idRecipe) => {
+  return async (dispatch) => {
     const recipes = await fetch(`${URL}recipes/findById/${idRecipe}`).then(res => res.json()).then(e => e.data);
     console.log(recipes);
   }
 }
 
-export const saveRecipes = (recipes) =>{
-  return async(dispatch) =>{
-    try{
-      const recipesBd = await axios.post(`${URL}recipes/create`, recipes);
+export const saveRecipes = (recipes) => {
+  return async (dispatch) => {
+    try {
+      await axios.post(`${URL}recipes/create`, recipes);
       dispatch({
         type: SAVE_RECIPES,
-        payload: recipesBd
+        payload: ''
       })
-    }catch (e){
-      console.log(e)
+    } catch (e) {
+      console.log(e);
+      alert("error to saving recipe");
     }
-    
-    
-    
   }
 }
 
+export const cleanError = ()=>{
+  return {
+    type: CLEAN_ERROR
+  }
+}

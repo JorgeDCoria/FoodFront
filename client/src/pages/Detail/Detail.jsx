@@ -32,7 +32,7 @@ export default function Detail() {
         }
         
       });
-    return setRecipe(null);
+    
   }, [idRecipe])
   if (recipe) {
 
@@ -44,7 +44,7 @@ export default function Detail() {
         
         <div className={s.containerdetail} >
           <h1 className={s.title}>{recipe.title}</h1>
-          <img className={s.img} src={recipe.image} alt="image of recipe" />
+          <img className={s.imgstyle} src={recipe.image} alt='img detail' />
           <hr />
           {/***********************************************
             ********** DIETS  Y HEALTH SCORE **************
@@ -74,13 +74,17 @@ export default function Detail() {
             }
            
           </div>
+
+            {/***********************************************
+            ***************** STEPS *********************
+            *********************************************** */}
           <div className={s.containersteps}>
             <img src={image} alt="" />
             <div className={s.subcontainersteps}>
               <p className={`${s.subtitle} ${s.titlesteps}`}>STEPS</p>
               {recipe.steps.length !==0 ? 
                 <ol>
-                  {recipe.steps.map(s=><li>{s.step}</ li>)}
+                  {recipe.steps.map(s=><li key={s.number}>{s.step}</ li>)}
 
                 </ol>: 
                 <p className={s.aviso}>The recipe haven't steps</p>};

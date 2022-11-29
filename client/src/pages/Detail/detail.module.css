@@ -16,7 +16,7 @@
   width: 70%;
   margin-top: 30px;
 }
-.img{
+.imgstyle{
   width: 700px;
 }
 
@@ -126,10 +126,16 @@
   color: #c4ff80;
   border-radius: 15px;
   background: #6a00e6;
+  box-sizing: border-box;
+  padding-top: 16px;
+  padding-bottom: 16px;
   
 }
 .subcontainersteps ol{
   width: 50ch;
+  margin: 0;
+  height: 100%;
+  box-sizing: border-box;
 }
 .subcontainersteps ol li{
   margin-bottom: 8px;

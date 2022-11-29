@@ -37,11 +37,22 @@ const findRecipeById = async (id) =>{
     throw({status: e?.status || 500, message: e.message });
   }
 }
+
+const findRecipeByTitle = async (title) =>{
+  try{
+    const recipe = await Recipe.findOne(queryFindRecipeByProp('title', title));
+    return recipe;
+    
+  }catch (e){
+    throw({status: e?.status || 500, message: e.message });
+  }
+}
 module.exports = {
   findRecipeByDiet,
   findRecipesIdByDiet,
   findRecipesByIds,
   findRecipeByNameOpLike,
   findAllRecipes, 
-  findRecipeById
+  findRecipeById,
+  findRecipeByTitle
 }

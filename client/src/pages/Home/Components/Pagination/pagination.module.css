@@ -10,21 +10,21 @@
   width: 60px;
   height: 25px;
   margin-right: 5px;
-  background: #E7E9EB;
-  border: 2px var(--main-two-color) solid;
-  background: var(--second-two-color);
-  font-weight: 600;
+  background: #efe5ff;
+  color: #2e0080 ;
+  font-weight: 400;
   border-radius: 10px;
+  border:none;
   
 }
 .btn:hover{
-  background: var(--main-two-color);
+  background: #acff1a;
   height: 30px;
   transition: 0.7s;
 }
 
 .current{
-  background: var(--main-one-color);
+  background: #acff1a;
   border: 2px var(--second-one-color);
   font-weight: 700;
 }

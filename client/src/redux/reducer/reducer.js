@@ -3,11 +3,13 @@ import {
   FILTER_RECIPES_BY_DIET,
   FILTER_RECIPES_BY_TITLE,
   ORDER_RECIPE,
-  SAVE_RECIPES
+  SAVE_RECIPES,
+  ERROR,
+  CLEAN_ERROR
 } from '../action/action';
 const initialState = {
   recipes: [],
-  detail: null
+  error: ''
 }
 const orderRecipes = (recipes, ord) =>{
   if(ord.prop ==="title"){
@@ -59,8 +61,17 @@ const rootReducer = (state = initialState, action) => {
       }
     case SAVE_RECIPES:
       return{
+        ...state
+      }
+    case ERROR:
+      return{
         ...state,
-        recipes: action.payload
+        error: action.payload
+      }
+    case CLEAN_ERROR:
+      return{
+        ...state,
+        error: ''
       }
     default:
       return state;

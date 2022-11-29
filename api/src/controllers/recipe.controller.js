@@ -8,52 +8,15 @@ const axios = require('axios');
 const URL = 'http://localhost:3002/api/'
 const recipeCtrl = {};
 
-const mapArrayApiToArrayRecipe = (arrayApi) => {
-  return arrayApi.map(recipe => mapApiToRecipe(recipe))
-};
-
-const mapApiToRecipe = (recipe) => {
-  // dietas
-
-  let dietsApi = new Set();
-  recipe.vegetarian && dietsApi.add("vegetarian");
-  recipe.vegan && dietsApi.add("vegan");
-  recipe.glutenFree && dietsApi.add("gluten free");
-  //se hace recorrido en diets para agregar solo aquellos que no pertenecen a dietsApi
-  if (recipe.diets.length) {
-    for (let diet of recipe.diets) {
-      dietsApi.add(diet);
-    }
-  }
-  //paso a paso
-  let stepsApi = [];
-
-  if (recipe.analyzedInstructions.length) {
-    for (let obj of recipe.analyzedInstructions) {
-      stepsApi = [...stepsApi, ...obj.steps.map(s => { return { number: s.number, step: s.step } })]
-    };
-  }
-
-  return {
-    id: recipe.id,
-    title: recipe.title,
-    healthScore: recipe.healthScore,
-    image:recipe.image,
-    summary: recipe.summary,
-    diets: Array.from(dietsApi),
-    steps: stepsApi
-
-  }
-}
 
 recipeCtrl.getRecipes = async (req, res) => {
   try {
     if (req.query.title) {
       const allRecipes = await recipeService.getRecipesByNameOpLike(req.query.title);
+      //hay coincidencias
       if(allRecipes.length) return res.json({status:'Ok', data: allRecipes});
-      return res
-        .status(400)
-        .json({status: 'FAILED', data: `Not found recipe with name ${req.query.title}`});
+      //Sin coincidencias
+      else throw ({status: 400, message: `Not found recipe with name ${req.query.title}`});
       
     } else {
       const recipes = await recipeService.findAllRecipes();
@@ -61,7 +24,7 @@ recipeCtrl.getRecipes = async (req, res) => {
     }
 
   } catch (e) {
-    res.status(401).json({status:'FAILED', data: `error loading recipes: ${e.message}` })
+    res.status(e?.status || 500).json({message: e?.message || e.message })
   }
 }
 
@@ -138,4 +101,14 @@ recipeCtrl.findRecipeByDiet = async (req, res) => {
   res.json(recipeBd);
 }
 
+recipeCtrl.findRecipeByTitle = async (req, res) =>{
+  try{
+    const recipe = await recipeService.findRecipeByTitle(req.query.title);
+    if(recipe) return res.json({status:'OK', data: recipe});
+    res.json({status:'FAILED', data:''});
+  }catch(e){
+    res.status(400).json({message: e.message})
+  }
+  
+}
 module.exports = recipeCtrl;

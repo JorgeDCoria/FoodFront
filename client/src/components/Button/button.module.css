@@ -2,8 +2,9 @@
   cursor: pointer;
   background: var(--main-one-color) ;
   border-radius: 25px;
-  color: white;
-  font-weight: 600;
+  color: #efe5ff;
+  font-family: 'Rasa', serif;
+  font-weight:500;
 }
 
 .xl{
@@ -18,9 +19,10 @@
   width : 130px;
   border: 2px solid white;
   box-sizing: border-box;
+  font-size: var(--main-text-body-md); 
 }
 
 .container:hover{
   transition: 0.5s;
-  background: #007342;
+  background: #72b300;
 }

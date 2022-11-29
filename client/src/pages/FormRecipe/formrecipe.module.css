@@ -12,7 +12,7 @@
   width: 80%;
   display: flex;
   box-sizing: border-box;
-  justify-content: end;
+  justify-content:flex-end;
   overflow: hidden;
   position:relative;
 

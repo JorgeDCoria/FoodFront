@@ -9,38 +9,21 @@ import Select from "../../../../components/Select/Select";
 import Loading from '../../../Loading/Loading';
 import Button from '../../../../components/Button/Button';
 import { useHistory } from "react-router-dom";
+
 //import { useForm } from "../../hooks/useForm";
 
 // const initialInpu = {};
 // const validationForm = (input)=>{
 
 // }
-const ExpRegLetrasEspacio = "^[ a-zA-ZñÑáéíóúÁÉÍÓÚ]+$";
-const validar = (input) => {
-  let errors = {};
-  if (input.title === '') {
-    errors.title = `Please, into title to recipe`;
-  }
-  if (input.title.match(ExpRegLetrasEspacio) === null) errors.title = `The title must not contain symbols`;
-  if (input.healthScore > 100 || input.healthScore < 0 || !input.healthScore) {
-    errors.healthScore = "Health Score should be betwen 0-100";
-  }
-  if (!input.summary) {
-    errors.summary = "Please, into Summary"
-  }
-  if (!input.diets.length) {
-    errors.diets = "Please, choose diet"
-  }
-  if (!input.steps.length) {
-    errors.steps = "Please, into steps"
-  }
 
-  return errors;
-}
+  
+    
+
 
 export default function Form() {
   //diets for control select
-  const [diets, setDiets] = useState(null);
+  const [diets, setDiets] = useState([]);
   //variable dietsAux to save diets that do not repeat
   const [dietsAux, setDietsAux] = useState(new Set());
   const [step, setStep] = useState('');
@@ -48,16 +31,11 @@ export default function Form() {
   const [recipes, setRecipes] = useState([]);
   const dispatch = useDispatch();
   const history = useHistory();
+  //const recipesBd = useSelector(state => state.recipes);
+ 
 
-  // const {
-  //   input,
-  //   errors,
-  //   loading,
-  //   response,
-  //   handleChange,
-  //   handleBur,
-  //   handleSubmit
-  // } = useForm();
+
+  const [errors, setErrors] = useState({});
 
   const [input, setInput] = useState({
     title: "",
@@ -69,9 +47,40 @@ export default function Form() {
 
   });
 
-  const [errors, setErrors] = useState({});
 
-
+  const ExpRegLetrasEspacio = "^[ a-zA-ZñÑáéíóúÁÉÍÓÚ]+$";
+  // function findRecipeByTitle(title){
+  //   console.log(`typeog de array ${Array.isArray(recipesBd)}`)
+  //   const exist = recipesBd.find(e => e.title.toUpperCase() === title.toUpperCase().trim());
+    
+  //   return  (typeof exist !== 'undefined');
+  // }
+  
+  const validar = (input) => {
+    let errors = {};
+    if (input.title === '') {
+      errors.title = `Please, into title to recipe`;
+    }
+    
+    if (input.title.match(ExpRegLetrasEspacio) === null) errors.title = `The title must not contain symbols`;
+    
+    //if (findRecipeByTitle(input.title)) errors.title = "The name is not available, it exists in the database "
+    
+    if (input.healthScore > 100 || input.healthScore < 0 || !input.healthScore) {
+      errors.healthScore = "Health Score should be betwen 0-100";
+    }
+    if (!input.summary) {
+      errors.summary = "Please, into Summary"
+    }
+    if (!input.diets.length) {
+      errors.diets = "Please, choose diet"
+    }
+    if (!input.steps.length) {
+      errors.steps = "Please, into steps"
+    }
+  
+    return errors;
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -101,6 +110,9 @@ export default function Form() {
     e.preventDefault();
     console.log(JSON.stringify(errors));
     if (!Object.getOwnPropertyNames(errors).length) {
+      if(input.image === ''){
+        input.image = 'https://upload.wikimedia.org/wikipedia/commons/6/6d/Good_Food_Display_-_NCI_Visuals_Online.jpg'
+      }
       setRecipes([...recipes, input])
       setInput({
         title: "",
@@ -119,17 +131,23 @@ export default function Form() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(e);
     if (recipes.length) {
       dispatch(saveRecipes(recipes));
-      alert("Data sabe successful");
+      alert("Data save successful");
+      
       history.push('/home');
     } else {
       alert("You Should add recipes before submitting");
     }
   }
   useEffect(() => {
-    dietService.getAllDiets().then(r => setDiets(r))
+   
+    dietService.getAllDiets()
+      .then(r => {
+        setDiets(r);
+      });
+  
+  
   }, [])
 
   // const deleteDiet = (diet)=>{
@@ -141,18 +159,18 @@ export default function Form() {
     if (e.target.value !== '') {
       setDietsAux(dietsAux.add(e.target.value));
       setInput({ ...input, diets: Array.from(dietsAux) });
-      setErrors(validar({ ...input, diets: Array.from(dietsAux) }));
+      setErrors(validar({ ...input, diets: Array.from(dietsAux) }, ...recipes));
     }
   }
 
-  const handleCancel = () =>{
+  const handleCancel = () => {
     alert("Are you sure to cancel operation, the loaded recipes will be lost ");
     history.push('/home');
   }
 
 
 
-  if (diets) {
+  if (diets.length!==0) {
     return (
       <form className={s.container} action="" onSubmit={handleSubmit}>
         <h1>ADD RECIPES</h1>
@@ -162,11 +180,15 @@ export default function Form() {
         <Input nameInput='healthScore' typeInput='number' valueInput={input.healthScore} handleChange={handleChange} />
         {errors.healthScore ? <Notification message={errors.healthScore} succces={false} /> : <Notification message={'Succes'} succes={true} />}
         <Input nameInput='image' typeInput='text' valueInput={input.image} handleChange={handleChange} />
-        {/* ########## text area ############# */}
+        {/* ************************************************************
+            ********************* text area ***************************
+            ************************************************************ */}
         <textarea className={s.summary} name='summary' value={input.summary} onChange={handleChange} placeholder='Write a resumen'></textarea>
         {errors.summary ? <Notification message={errors.summary} succces={false} /> : <Notification message={'Succes'} succes={true} />}
 
-        {/* ######## dieta ####### */}
+        {/*   ************************************************************
+              ********************* dieta  *******************************
+              ************************************************************ */}
         <div className={s.containerdiets}>
           <h2>DIETS</h2>
           <div className={s.subcontainerdiets}>
@@ -196,7 +218,9 @@ export default function Form() {
         </div>
         {errors.diets ? <Notification message={errors.diets} succces={false} /> : <Notification message={'Succes'} succes={true} />}
 
-        {/* ############## steps ################## */}
+        {/*   ************************************************************
+              ********************* steps  *******************************
+              ************************************************************ */}
         <div className={s.containersteps}>
           <h2 className={s.stepstitle}>STEPS</h2>
           <div className={s.stepscontrol}>
@@ -210,24 +234,19 @@ export default function Form() {
             {input.steps.length !== 0 && input.steps.map((e) => <p className={s.stepitem} key={e.number}>step:{e.number} - {e.step}</p>)}
           </div>
         </div>
+
         <Button text='ADD RECIPE' handleClic={addRecipe} size='xl' />
         <p>You can generate as many recipes as you want. Once finished press FINISH to save the changes cambios</p>
         <div className={s.containerrecipes}>
           <h2>List</h2>
-          {recipes.length!==0 && recipes.map((e, i) => <pre className={s.pre} key={i}>{JSON.stringify(e, null, 2)}</pre>)}
+          {recipes.length !== 0 && recipes.map((e, i) => <pre className={s.pre} key={i}>{JSON.stringify(e, null, 2)}</pre>)}
         </div>
         <div className={s.groupbutton}>
-          <button onClick={()=>handleCancel()} className={`${s.btn} ${s.cancelar}`} >Cancelar</button>
+          <button onClick={() => handleCancel()} className={`${s.btn} ${s.cancelar}`} >Cancelar</button>
           <button className={s.btn} type="submit">Finalizar y Guardar</button>
 
         </div>
-
-
-
-
       </form>
-
-
     );
 
   } else {

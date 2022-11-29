@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from 'react-router-dom';
 import Button from "../../components/Button/Button";
+import image from '../../assets/landing-image-one.jpg';
 import s from './landing.module.css';
 export default function Landing() {
   const handleClic = () => {
@@ -8,9 +9,11 @@ export default function Landing() {
   }
   return (
     <div className={s.container}>
+      
       <div className={s.subContainer}>
+        <img src={image} alt="imagen-landing" />
         <div className={s.section}>
-          <h1 className={s.title}>BIENVENIDO A FOOD</h1>
+          <h1 className={s.title}>Bienvenidos a Food</h1>
           <div>
             <p className={s.text}>
               La cocina sigue siendo una asignatura pendiente para muchos, sobre todo los platos más caseros,

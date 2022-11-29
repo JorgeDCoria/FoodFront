@@ -4,7 +4,8 @@ const recipeCtrl = require('../controllers/recipe.controller.js');
 const router = Router();
 
 router.get("/", recipeCtrl.getRecipes);
-router.get("/findByDiets", recipeCtrl.findRecipeByDiet)
+router.get("/findByDiets", recipeCtrl.findRecipeByDiet);
+router.get("/findByTitle", recipeCtrl.findRecipeByTitle);
 router.get("/findById/:id", recipeCtrl.getRecipeById);
 router.put("/update/:id", recipeCtrl.updateRecipe);
 router.post("/create", recipeCtrl.addRecipe);

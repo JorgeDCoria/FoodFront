@@ -2,8 +2,10 @@ const recipeRepository = require('../Repository/recipe.repository');
 const dietRepository = require('../Repository/diet.repository');
 const axios = require('axios');
 
-
-const URL = 'http://localhost:3002/api/'
+const APIKEY='09192bc3cbe64830bf3e527e38a4943c';
+const URL = 'http://localhost:3002/api/';
+const URLTWO =  `https://api.spoonacular.com/recipes/complexSearch?apiKey=${APIKEY}&addRecipeInformation=true&number=100`;
+const URLTHREE = `https://api.spoonacular.com/recipes/{id}/information?apiKey=${APIKEY}`;
 
 //########## mapeo de datos de bd   ##########
 const mapArrayBdToArrayRecipe = (data) => {
@@ -68,7 +70,7 @@ const findRecipeByDiet = async (diet) => {
   let recipesApi = await axios.get(`${URL}allRecipes`)
     .then(r => r.data.results)
     .then(r => mapArrayApiToArrayRecipe(r.filter(r => r.diets.includes(diet))));
-  return [...recipesBd, ...recipesApi];
+  return [...recipesApi, ...recipesBd ];
 }
 
 const getRecipesByNameOpLike = async (name) => {
@@ -77,14 +79,14 @@ const getRecipesByNameOpLike = async (name) => {
     .then(r => r.data.results)
     .then(r => mapArrayApiToArrayRecipe(r.filter(r => r.title.includes(name))));
 
-  return [...recipesBd, ...recipesApi];
+  return [...recipesApi, ...recipesBd ];
 }
 
 
 const findAllRecipes = async () => {
   const recipesBd = await recipeRepository.findAllRecipes().then(r => mapArrayBdToArrayRecipe(r));
   const recipesApi = await axios.get(`${URL}allRecipes`).then(r => mapArrayApiToArrayRecipe(r.data.results));
-  return [...recipesBd, ...recipesApi]
+  return [ ...recipesApi, ...recipesBd]
 }
 
 const getRecipeById = async (id) => {
@@ -103,9 +105,16 @@ const getRecipeById = async (id) => {
   }
 
 }
+
+const findRecipeByTitle = async (title) =>{
+ let recipe = await recipeRepository.findRecipeByTitle(title);
+ if(recipe) recipe = mapRecipeBdToRecipe(recipe);
+ return recipe;
+}
 module.exports = {
   findRecipeByDiet,
   getRecipesByNameOpLike,
   findAllRecipes,
-  getRecipeById
+  getRecipeById,
+  findRecipeByTitle
 }

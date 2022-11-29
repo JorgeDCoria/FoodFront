@@ -1,28 +1,28 @@
-import {useState} from "react";
+// import {useState} from "react";
 
-export const useForm = (initialForm, validateForm) =>{
-  const [input, setInput] = useState(initialForm);
-  const [errors, setErrors] = useState({});
-  const[loading, setLoading] = useState(false);
-  const [response, setResponse] = useState(null);
+// export const useForm = (initialForm, validateForm) =>{
+//   const [input, setInput] = useState(initialForm);
+//   const [errors, setErrors] = useState({});
+//   const[loading, setLoading] = useState(false);
+//   const [response, setResponse] = useState(null);
 
-  const handleChange = (e) =>{
+//   const handleChange = (e) =>{
 
-  }
-  const handleBur = (e) =>{
+//   }
+//   const handleBur = (e) =>{
     
-  }
-  const handleSubmit = (e) =>{
+//   }
+//   const handleSubmit = (e) =>{
     
-  }
+//   }
 
-  return {
-    input,
-    errors,
-    loading,
-    response,
-    handleChange,
-    handleBur,
-    handleSubmit
-  }
-}
+//   return {
+//     input,
+//     errors,
+//     loading,
+//     response,
+//     handleChange,
+//     handleBur,
+//     handleSubmit
+//   }
+// }

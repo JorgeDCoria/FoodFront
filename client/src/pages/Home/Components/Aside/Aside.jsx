@@ -4,7 +4,6 @@ import { filterRecipeByDiet, orderRecipe } from '../../../../redux/action/action
 import { useDispatch } from "react-redux";
 import s from "./aside.module.css";
 import Select from "../../../../components/Select/Select";
-import Loading from "../../../Loading/Loading";
 
 export default function Aside({ setPagina }) {
   const [diets, setDiets] = useState([]);
@@ -13,9 +12,14 @@ export default function Aside({ setPagina }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dietService.getAllDiets().then(r => {
-      setDiets(r);
-    })
+    let isMounted = true;
+    dietService.getAllDiets()
+    .then(r => {
+      if(isMounted) setDiets(r);
+    });
+    return ()=>{
+      isMounted = false;
+    }
 
   }, [])
 
@@ -67,7 +71,7 @@ export default function Aside({ setPagina }) {
       </div>
     )
   } else {
-    return <Loading />
+    return <h2>Loading...</h2>
   }
 
 }
