@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState} from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Input from "../Input/Input";
 import dietService from "../../../../services/diet/diet.service";
 import { saveRecipes } from '../../../../redux/action/action';
@@ -31,7 +31,8 @@ export default function Form() {
   const [recipes, setRecipes] = useState([]);
   const dispatch = useDispatch();
   const history = useHistory();
-  //const recipesBd = useSelector(state => state.recipes);
+  const recipesBd = useSelector (state => state.recipes);
+  
  
 
 
@@ -49,12 +50,12 @@ export default function Form() {
 
 
   const ExpRegLetrasEspacio = "^[ a-zA-ZñÑáéíóúÁÉÍÓÚ]+$";
-  // function findRecipeByTitle(title){
-  //   console.log(`typeog de array ${Array.isArray(recipesBd)}`)
-  //   const exist = recipesBd.find(e => e.title.toUpperCase() === title.toUpperCase().trim());
+  function findRecipeByTitle(title){
+    console.log(`typeog de array ${Array.isArray(recipesBd)}`)
+    const exist = recipesBd.find(e => e.title.toUpperCase() === title.toUpperCase().trim());
     
-  //   return  (typeof exist !== 'undefined');
-  // }
+    return  (typeof exist !== 'undefined');
+  }
   
   const validar = (input) => {
     let errors = {};
@@ -64,7 +65,7 @@ export default function Form() {
     
     if (input.title.match(ExpRegLetrasEspacio) === null) errors.title = `The title must not contain symbols`;
     
-    //if (findRecipeByTitle(input.title)) errors.title = "The name is not available, it exists in the database "
+    if (findRecipeByTitle(input.title)) errors.title = "The name is not available, it exists in the database "
     
     if (input.healthScore > 100 || input.healthScore < 0 || !input.healthScore) {
       errors.healthScore = "Health Score should be betwen 0-100";
