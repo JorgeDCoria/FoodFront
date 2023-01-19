@@ -30,7 +30,7 @@ export default function Detail() {
           div.append(summ);
         }
       });
-  }, [idRecipe]);
+  }, [idRecipe, URL]);
   if (recipe) {
     return (
       <div className={s.container}>
